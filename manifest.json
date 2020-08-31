@@ -1,11 +1,10 @@
 {
   "name": "Google Meet Chat Extension",
-  "version": "0.1",
+  "version": "1.0.0",
   "description": "Google meet chat notification popups.",
-  "permissions": ["notifications", "declarativeContent"],
+  "permissions": ["notifications"],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "scripts": ["background.js"]
   },
   "content_scripts": [{
     "matches": ["https://meet.google.com/*"],

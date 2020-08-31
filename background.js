@@ -1,21 +1,49 @@
-'use strict';
-
 chrome.runtime.onInstalled.addListener(function () {
   chrome.notifications.create(
     {
-      type:"basic",
-      title:"Welcome",
-      message:"Thank you for installing!",
-      iconUrl:"./images/get_started128.png"
+      type: "basic",
+      title: "Welcome",
+      message: "Thank you for installing!",
+      iconUrl: "./images/get_started128.png"
     }
   );
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: { hostEquals: 'meet.google.com' }
-      })
-      ],
-      actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
-  });
 });
+messages = [];
+watching = false;
+function getNotificationId() {
+  var id = (Date.now() * 100) + 1;
+  return id.toString();
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type == "notification") {
+    messages.push(request.opt);
+    if (!watching) {
+      watching = true;
+      notifier();
+    }
+    sendResponse(true);
+  }
+});
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type == "clean") {
+    messages = [];
+  }
+  sendResponse(true);
+});
+
+function notifier() {
+  if (messages.length > 0) {
+    nId = getNotificationId();
+    notification = chrome.notifications.create(nId, messages.shift(), function (nId) {
+      setTimeout(function (_nId) {
+        chrome.notifications.clear(_nId, () => {
+          notifier();
+        });
+      }, 4000, nId);
+    });
+  } else {
+    watching = false;
+  }
+}
