@@ -1,3 +1,15 @@
+// Msg array for notifs
+var messages = [];
+// Is watching for new msgs
+var watching = false;
+
+// Generate id based on time
+function getNotificationId() {
+  var id = (Date.now() * 100) + 1;
+  return id.toString();
+}
+
+// On install thank you msg
 chrome.runtime.onInstalled.addListener(function () {
   chrome.notifications.create(
     {
@@ -8,31 +20,8 @@ chrome.runtime.onInstalled.addListener(function () {
     }
   );
 });
-messages = [];
-watching = false;
-function getNotificationId() {
-  var id = (Date.now() * 100) + 1;
-  return id.toString();
-}
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.type == "notification") {
-    messages.push(request.opt);
-    if (!watching) {
-      watching = true;
-      notifier();
-    }
-    sendResponse(true);
-  }
-});
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.type == "clean") {
-    messages = [];
-  }
-  sendResponse(true);
-});
-
+// Create desktop notif using message array
 function notifier() {
   if (messages.length > 0) {
     nId = getNotificationId();
@@ -47,3 +36,23 @@ function notifier() {
     watching = false;
   }
 }
+
+// Listener for new msgs notif event
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type == "notification") {
+    messages.push(request.notifData);
+    if (!watching) {
+      watching = true;
+      notifier();
+    }
+    sendResponse(true);
+  }
+});
+
+// Listen for clean msg event
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type == "clean") {
+    messages = [];
+  }
+  sendResponse(true);
+});
