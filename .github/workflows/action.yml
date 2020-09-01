@@ -1,9 +1,17 @@
-steps:
-- uses: actions/checkout@v2
-
-- uses: meeDamian/github-release@2.0
-  with:
-    token: ${{ secrets.GITHUB_TOKEN }}
-    name: google-meet-chat-extension
-    body: Latest version of extension to install follow README.md.
-    files: src/
+name: Release Package
+on:
+  push:
+    branches: 
+      - master
+jobs:
+  release-package:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Release 🚀
+      uses: meeDamian/github-release@2.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        name: google-meet-chat-extension
+        body: Latest version of extension to install follow README.md.
+        files: src/
