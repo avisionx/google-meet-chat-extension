@@ -12,7 +12,6 @@ jobs:
       uses: meeDamian/github-release@2.0
       with:
         tag: v1.0.0
-        draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
         name: google-meet-chat-extension
         body: Latest version of extension to install follow README.md.
