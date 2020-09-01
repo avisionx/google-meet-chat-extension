@@ -1,0 +1,9 @@
+steps:
+- uses: actions/checkout@v2
+
+- uses: meeDamian/github-release@2.0
+  with:
+    token: ${{ secrets.GITHUB_TOKEN }}
+    name: google-meet-chat-extension
+    body: Latest version of extension to install follow README.md.
+    files: src/
